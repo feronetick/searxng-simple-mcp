@@ -393,7 +393,6 @@ You can customize the behavior by adding environment variables:
       "env": {
         "SEARXNG_MCP_SEARXNG_URL": "https://your-instance.example.com",
         "SEARXNG_MCP_TIMEOUT": "15",
-        "SEARXNG_MCP_MAX_RESULTS": "20",
         "SEARXNG_MCP_LANGUAGE": "en"
       }
     }

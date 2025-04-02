@@ -93,7 +93,7 @@ async def web_search(
         result = results if result_format == "json" else searxng_client.format_results(results)
 
         if ctx:
-            await ctx.info(f"Found {len(results.get('results', []))} results")
+            ctx.info(f"Found {len(results.get('results', []))} results")
     except Exception as e:
         error_msg = f"Unexpected error during search: {e}"
         logger.exception(error_msg)
