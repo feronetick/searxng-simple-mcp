@@ -28,6 +28,5 @@ ENV PATH="/app/.venv/bin:$PATH"
 # Reset the entrypoint, don't invoke `uv`
 ENTRYPOINT []
 
-# Uses the transport protocol specified by TRANSPORT_PROTOCOL env var (defaults to sse)
-ENV TRANSPORT_PROTOCOL=stdio
-CMD ["sh", "-c", "fastmcp run src/searxng_simple_mcp/server.py --transport ${TRANSPORT_PROTOCOL}"]
+# Uses the transport protocol specified by TRANSPORT_PROTOCOL env var (defaults to stdio)
+CMD ["sh", "-c", "fastmcp run src/searxng_simple_mcp/server.py --transport ${TRANSPORT_PROTOCOL:-stdio}"]

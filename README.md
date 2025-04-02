@@ -34,7 +34,6 @@ Create a `.clauderc` file in your home directory:
       "args": [
         "run", "searxng-simple-mcp@latest"
       ],
-      "transport": "stdio",
       "env": {
         "SEARXNG_MCP_SEARXNG_URL": "https://your-instance.example.com"
       }
@@ -53,7 +52,6 @@ Create a `.clauderc` file in your home directory:
       "args": [
         "run", "searxng-simple-mcp@latest"
       ],
-      "transport": "stdio",
       "env": {
         "SEARXNG_MCP_SEARXNG_URL": "https://your-instance.example.com"
       }
@@ -70,7 +68,6 @@ Create a `.clauderc` file in your home directory:
     "searxng": {
       "command": "python",
       "args": ["-m", "searxng_simple_mcp.server"],
-      "transport": "stdio",
       "env": {
         "SEARXNG_MCP_SEARXNG_URL": "https://your-instance.example.com"
       }
@@ -88,11 +85,9 @@ Create a `.clauderc` file in your home directory:
       "command": "docker",
       "args": [
         "run", "--rm", "-i", "--network=host",
-        "-e", "TRANSPORT_PROTOCOL=stdio",
         "-e", "SEARXNG_MCP_SEARXNG_URL=http://localhost:8080",
         "ghcr.io/sacode/searxng-simple-mcp:latest"
-      ],
-      "transport": "stdio"
+      ]
     }
   }
 }
@@ -187,44 +182,74 @@ If you prefer using Docker:
 # Pull the Docker image
 docker pull ghcr.io/sacode/searxng-simple-mcp:latest
 
-# Run the container
-docker run -p 8000:8000 --env-file .env ghcr.io/sacode/searxng-simple-mcp:latest
+# Run the container with default settings (stdio transport)
+docker run --rm -i ghcr.io/sacode/searxng-simple-mcp:latest
+
+# Run with environment file for configuration
+docker run --rm -i --env-file .env ghcr.io/sacode/searxng-simple-mcp:latest
+
+# Run with SSE transport (starts HTTP server on port 8000)
+docker run -p 8000:8000 -e TRANSPORT_PROTOCOL=sse ghcr.io/sacode/searxng-simple-mcp:latest
+
+# Building locally
+docker build -t searxng-simple-mcp:local .
+docker run --rm -i searxng-simple-mcp:local
+
+# Using Docker Compose
+docker-compose up -d
 ```
+
+For complete Docker usage information, see the [Docker Configuration](#docker-configuration) section below.
 
 ## Transport Protocols
 
 The MCP server supports two transport protocols:
 
-- **STDIO**: For CLI applications and direct integration (default)
-- **SSE**: For web-based clients and HTTP-based integrations
+- **STDIO** (default): For CLI applications and direct integration
+  - Used by default in all examples
+  - Suitable for integration with Claude Desktop and other MCP-compliant clients
+  - No HTTP server is started
 
-### Using SSE with Docker
+- **SSE** (Server-Sent Events): For web-based clients and HTTP-based integrations
+  - Starts an HTTP server that clients can connect to
+  - Useful for web applications and services that need real-time updates
+  - Requires port mapping when using Docker
 
-Server-Sent Events (SSE) is a transport protocol that allows the server to push updates to clients over HTTP connections. This is useful for web-based applications and services that need real-time updates from the MCP server.
+### Using SSE Transport
 
-To use SSE with Docker:
+To use the SSE transport protocol:
 
-```bash
-# Run with SSE transport protocol
-docker run -p 8000:8000 -e TRANSPORT_PROTOCOL=sse -e SEARXNG_MCP_SEARXNG_URL=https://your-instance.example.com ghcr.io/sacode/searxng-simple-mcp:latest
-```
+1. **With direct execution**:
+
+   ```bash
+   # Set the transport protocol to SSE
+   TRANSPORT_PROTOCOL=sse python -m searxng_simple_mcp.server
+   
+   # Or with FastMCP
+   fastmcp run src/searxng_simple_mcp/server.py --transport sse
+   ```
+
+2. **With Docker**:
+
+   ```bash
+   # Run with SSE transport protocol
+   docker run -p 8000:8000 -e TRANSPORT_PROTOCOL=sse -e SEARXNG_MCP_SEARXNG_URL=https://your-instance.example.com ghcr.io/sacode/searxng-simple-mcp:latest
+   ```
+
+3. **With Docker Compose** (from the included `docker-compose.yml`):
+
+   ```yaml
+   environment:
+     - SEARXNG_MCP_SEARXNG_URL=https://searx.info
+     - SEARXNG_MCP_TIMEOUT=10
+     - SEARXNG_MCP_MAX_RESULTS=20
+     - SEARXNG_MCP_LANGUAGE=all
+     - TRANSPORT_PROTOCOL=sse # Transport protocol: stdio or sse
+   ```
 
 When using SSE, the server will be accessible via HTTP at `http://localhost:8000` by default.
 
-You can find a complete example in the `docker-compose.yml` file included in this repository:
-
-```yaml
-environment:
-  - SEARXNG_MCP_SEARXNG_URL=https://searx.info
-  - SEARXNG_MCP_TIMEOUT=10
-  - SEARXNG_MCP_MAX_RESULTS=20
-  - SEARXNG_MCP_LANGUAGE=all
-  - TRANSPORT_PROTOCOL=sse # Transport protocol: stdio or sse
-```
-
-**Note:** Not all applications support the SSE transport protocol. Make sure your MCP client is compatible with SSE before using this transport method. Some applications may only support the STDIO transport protocol.
-
-To connect to the SSE server from an MCP client, you would use a configuration like:
+To connect to the SSE server from an MCP client, use a configuration like:
 
 ```json
 {
@@ -236,6 +261,8 @@ To connect to the SSE server from an MCP client, you would use a configuration l
   }
 }
 ```
+
+**Note:** Not all applications support the SSE transport protocol. Make sure your MCP client is compatible with SSE before using this transport method.
 
 ## Development
 
@@ -283,6 +310,7 @@ npm run publish:major  # Increments major version (1.0.1 -> 2.0.0)
 ```
 
 These commands will:
+
 1. Update the version in both package.json and pyproject.toml
 2. Clean the dist directory to remove old builds
 3. Build the package (creating wheel and source distribution)
@@ -290,26 +318,29 @@ These commands will:
 5. Upload the package to PyPI
 
 You'll need to have a PyPI account and be authenticated with twine. You can set up authentication by:
+
 - Creating a `.pypirc` file in your home directory
 - Using environment variables (`TWINE_USERNAME` and `TWINE_PASSWORD`)
 - Using PyPI API tokens (recommended)
 
-## Docker Usage
+## Docker Configuration
 
-Docker is an alternative way to run the server:
+When using Docker with MCP servers, keep these points in mind:
 
-```bash
-# Using pre-built image
-docker pull ghcr.io/sacode/searxng-simple-mcp:latest
-docker run -p 8000:8000 --env-file .env ghcr.io/sacode/searxng-simple-mcp:latest
+1. **Integration with MCP clients**: Use the configuration shown in the [Using with Docker](#using-with-docker-no-installation-required) section for integrating with Claude Desktop or other MCP-compliant clients.
 
-# Building locally
-docker build -t searxng-simple-mcp:local .
-docker run -p 8000:8000 --env-file .env searxng-simple-mcp:local
+2. **Transport protocols**:
+   - By default, the Docker container uses the stdio transport protocol
+   - For SSE transport, see the [Using SSE Transport](#using-sse-transport) section
 
-# Using Docker Compose
-docker-compose up -d
-```
+3. **Configuration options**:
+   - Use an environment file (.env) to configure the server: `docker run --env-file .env ...`
+   - Pass individual environment variables with the `-e` flag: `docker run -e SEARXNG_MCP_SEARXNG_URL=https://example.com ...`
+   - See the [Configuration](#configuration) section for available environment variables
+
+4. **Networking**:
+   - Use `--network=host` when you need to access services on your host machine
+   - Use `-p 8000:8000` when exposing the SSE server to your network
 
 ## Package Structure
 
