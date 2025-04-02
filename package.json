@@ -1,11 +1,4 @@
 {
-  "name": "searxng-simple-mcp",
-  "version": "1.0.1",
-  "description": "SearxNG Simple MCP Server",
-  "main": "src/searxng_simple_mcp/server.py",
-  "bin": {
-    "searxng-simple-mcp": "src/searxng_simple_mcp/server.py"
-  },
   "scripts": {
     "start": "python src/run_server.py",
     "dev": "mcp dev src/searxng_simple_mcp/server.py",

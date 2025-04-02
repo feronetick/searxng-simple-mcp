@@ -118,6 +118,8 @@ Configure the server using environment variables:
 | SEARXNG_MCP_LOG_LEVEL | Logging level (e.g., 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL') | ERROR |
 | TRANSPORT_PROTOCOL | Transport protocol ('stdio' or 'sse') | stdio |
 
+**Note:** Setting log levels higher than ERROR (such as DEBUG or INFO) may break integration with some applications due to excessive output in the communication channel.
+
 You can find a list of public SearxNG instances at [https://searx.space](https://searx.space) if you don't want to host your own.
 
 ## Installation & Usage
