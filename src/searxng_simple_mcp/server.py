@@ -113,6 +113,6 @@ SearxNG MCP Server Information:
 ------------------------------
 SearxNG Instance: {settings.searxng_url}
 Timeout: {settings.timeout} seconds
-Max Results: {settings.max_results}
+Default Result Count: {settings.default_result_count}
 Default Language: {settings.default_language}
     """
