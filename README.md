@@ -72,7 +72,7 @@ The following environment variables are available for configuration:
 
 | Environment Variable | Description | Default Value |
 |----------------------|-------------|---------------|
-| SEARXNG_MCP_SEARXNG_URL | URL of the SearxNG instance to use | https://paulgo.io/ |
+| SEARXNG_MCP_SEARXNG_URL | URL of the SearxNG instance to use | <https://paulgo.io/> |
 | SEARXNG_MCP_TIMEOUT | HTTP request timeout in seconds | 10 |
 | SEARXNG_MCP_DEFAULT_RESULT_COUNT | Default number of results to return in searches | 10 |
 | SEARXNG_MCP_DEFAULT_LANGUAGE | Language code for search results (e.g., 'en', 'ru', 'all') | all |
@@ -120,13 +120,32 @@ npm run run:sse    # Use sse transport
 
 ## Docker Usage
 
-You can also run this application using Docker, which provides an isolated and consistent environment.
+You can run this application using Docker in two ways:
 
-### Using Docker
+1. Using the pre-built image from GitHub Container Registry (recommended)
+2. Building the image locally
+
+### Using the Pre-built Image
+
+The project is automatically built and published to GitHub Container Registry when changes are pushed to the main branch.
 
 ```bash
-# Build the Docker image
-npm run docker:build
+# Pull the latest image
+docker pull ghcr.io/sacode/searxng-simple-mcp:latest
+
+# Run the container
+docker run -p 8000:8000 --env-file .env ghcr.io/sacode/searxng-simple-mcp:latest
+
+# Run with specific transport protocol
+docker run -p 8000:8000 --env-file .env -e TRANSPORT_PROTOCOL=stdio ghcr.io/sacode/searxng-simple-mcp:latest
+docker run -p 8000:8000 --env-file .env -e TRANSPORT_PROTOCOL=sse ghcr.io/sacode/searxng-simple-mcp:latest
+```
+
+### Using Docker with Pre-built Image
+
+```bash
+# Pull the latest image from GitHub Container Registry
+npm run docker:pull
 
 # Run the container (uses sse transport by default)
 npm run docker:run
@@ -136,9 +155,23 @@ npm run docker:run:stdio  # Use stdio transport
 npm run docker:run:sse    # Use sse transport
 ```
 
-### Using Docker Compose
+### Building Locally with Docker
 
-Docker Compose allows you to run the application along with any dependencies as a multi-container application.
+```bash
+# Build the Docker image
+npm run docker:build
+
+# Run the container (uses sse transport by default)
+npm run docker:run:local
+
+# Run with specific transport protocol
+npm run docker:run:stdio:local  # Use stdio transport
+npm run docker:run:sse:local    # Use sse transport
+```
+
+### Using Docker Compose with Pre-built Image
+
+Docker Compose allows you to run the application along with any dependencies as a multi-container application. By default, the docker-compose.yml file is configured to use the pre-built image from GitHub Container Registry.
 
 ```bash
 # Start services (uses sse transport by default)
@@ -161,14 +194,17 @@ npm run docker:compose:build
 npm run docker:compose:restart
 ```
 
-### Docker Configuration
+### Docker Configuration and Image Sources
 
 The Docker setup uses the following configuration:
 
-- The application runs on port 8000 inside the container, mapped to port 8000 on your host
-- Environment variables can be set in the `.env` file or in the `docker-compose.yml` file
-- The `src` directory is mounted as a volume, allowing code changes without rebuilding the image
-- Transport protocol can be configured using the `TRANSPORT_PROTOCOL` environment variable (values: `stdio` or `sse`, default: `sse`)
+- **Image Source**: By default, the image is pulled from GitHub Container Registry (`ghcr.io/sacode/searxng-simple-mcp:latest`)
+- **Port**: The application runs on port 8000 inside the container, mapped to port 8000 on your host
+- **Environment Variables**: Can be set in the `.env` file or in the `docker-compose.yml` file
+- **Volume Mounts**: The `src` directory is mounted as a volume, allowing code changes without rebuilding the image
+- **Transport Protocol**: Can be configured using the `TRANSPORT_PROTOCOL` environment variable (values: `stdio` or `sse`, default: `sse`)
+
+You can switch between using the pre-built image and building locally by editing the `docker-compose.yml` file (uncomment the build section and comment out the image line).
 
 #### Transport Protocol Options
 
@@ -180,11 +216,13 @@ The MCP server supports two transport protocols:
 You can specify the transport protocol in several ways:
 
 1. Using environment variables:
+
    ```
    TRANSPORT_PROTOCOL=stdio docker-compose up -d
    ```
 
 2. Using the provided npm scripts:
+
    ```
    npm run docker:run:stdio
    npm run docker:compose:up:sse
@@ -216,6 +254,7 @@ docker pull ghcr.io/[your-username]/searxng-simple-mcp:latest
 # Run the container
 docker run -p 8000:8000 --env-file .env ghcr.io/[your-username]/searxng-simple-mcp:latest
 ```
+
 The CI/CD workflow configuration can be found in `.github/workflows/docker-build-publish.yml`. The workflow has been configured with the minimum required permissions to push to the GitHub Container Registry.
 
 ### Automated Testing and Linting
@@ -239,9 +278,6 @@ When a new release is created on GitHub, the version number is automatically upd
   - Updates the version in pyproject.toml
   - Commits and pushes the changes back to the repository
 This ensures that the version numbers in the project files always match the latest release. The workflow configuration can be found in `.github/workflows/release-version.yml`. This workflow has been granted write permissions to update files in the repository.
-
-
-
 
 ## Project Structure
 

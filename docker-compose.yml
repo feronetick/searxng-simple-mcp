@@ -3,9 +3,11 @@
 
 services:
   searxng-simple-mcp:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/sacode/searxng-simple-mcp:latest
+    # Uncomment below to build locally instead of using the published image
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     container_name: searxng-simple-mcp
     restart: unless-stopped
     ports:
