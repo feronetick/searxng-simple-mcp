@@ -202,7 +202,7 @@ The Docker setup uses the following configuration:
 - **Port**: The application runs on port 8000 inside the container, mapped to port 8000 on your host
 - **Environment Variables**: Can be set in the `.env` file or in the `docker-compose.yml` file
 - **Volume Mounts**: The `src` directory is mounted as a volume, allowing code changes without rebuilding the image
-- **Transport Protocol**: Can be configured using the `TRANSPORT_PROTOCOL` environment variable (values: `stdio` or `sse`, default: `sse`)
+- **Transport Protocol**: Can be configured using the `TRANSPORT_PROTOCOL` environment variable (values: `stdio` or `sse`, default: `stdio`)
 
 You can switch between using the pre-built image and building locally by editing the `docker-compose.yml` file (uncomment the build section and comment out the image line).
 
@@ -210,8 +210,8 @@ You can switch between using the pre-built image and building locally by editing
 
 The MCP server supports two transport protocols:
 
-- **SSE (Server-Sent Events)**: Default protocol, suitable for web-based clients and most use cases
-- **STDIO (Standard Input/Output)**: Alternative protocol, useful for certain integration scenarios
+- **STDIO (Standard Input/Output)**: Default protocol, useful for CLI applications and direct integration
+- **SSE (Server-Sent Events)**: Alternative protocol, suitable for web-based clients and HTTP-based integrations
 
 You can specify the transport protocol in several ways:
 
@@ -278,6 +278,129 @@ When a new release is created on GitHub, the version number is automatically upd
   - Updates the version in pyproject.toml
   - Commits and pushes the changes back to the repository
 This ensures that the version numbers in the project files always match the latest release. The workflow configuration can be found in `.github/workflows/release-version.yml`. This workflow has been granted write permissions to update files in the repository.
+## Integration with MCP-Compatible Applications
+
+Many applications support the Model Context Protocol (MCP) and allow configuring MCP servers through JSON configuration. Here's how to integrate this SearxNG MCP server with such applications:
+
+### Using Docker Image with STDIO Transport (Default, Recommended for CLI Applications)
+
+```json
+{
+  "mcpServers": {
+    "searxng": {
+      "command": "docker run --rm -i ghcr.io/sacode/searxng-simple-mcp:latest",
+      "transport": "stdio",
+      "env": {
+        "TRANSPORT_PROTOCOL": "stdio"
+      }
+    }
+  }
+}
+```
+
+### Using Docker Image with SSE Transport (Recommended for Web Applications)
+
+```json
+{
+  "mcpServers": {
+    "searxng": {
+      "command": "docker run --rm -p 8000:8000 ghcr.io/sacode/searxng-simple-mcp:latest",
+      "transport": "sse",
+      "transportOptions": {
+        "url": "http://localhost:8000/mcp"
+      },
+      "env": {
+        "TRANSPORT_PROTOCOL": "sse"
+      }
+    }
+  }
+}
+```
+
+For SSE transport, you can also deploy using docker-compose:
+
+```yaml
+# docker-compose.yml
+services:
+  searxng-mcp:
+    image: ghcr.io/sacode/searxng-simple-mcp:latest
+    ports:
+      - "8000:8000"
+    environment:
+      - TRANSPORT_PROTOCOL=sse
+      - SEARXNG_MCP_SEARXNG_URL=https://searx.info
+    restart: unless-stopped
+```
+
+Then in your MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "searxng": {
+      "transport": "sse",
+      "transportOptions": {
+        "url": "http://localhost:8000/mcp"
+      }
+    }
+  }
+}
+```
+
+### Using Python with pip
+
+If you have the package installed via pip:
+
+```json
+{
+  "mcpServers": {
+    "searxng": {
+      "command": "python -m src.searxng_simple_mcp.server",
+      "transport": "stdio",
+      "env": {
+        "TRANSPORT_PROTOCOL": "stdio"
+      }
+    }
+  }
+}
+```
+
+### Using fastmcp
+
+If you have fastmcp installed:
+
+```json
+{
+  "mcpServers": {
+    "searxng": {
+      "command": "fastmcp run path/to/searxng-simple-mcp/src/searxng_simple_mcp/server.py --transport stdio",
+      "transport": "stdio"
+    }
+  }
+}
+```
+
+### Configuration Options
+
+You can customize the behavior by adding environment variables:
+
+```json
+{
+  "mcpServers": {
+    "searxng": {
+      "command": "npx -y github:sacode/searxng-simple-mcp",
+      "transport": "stdio",
+      "env": {
+        "SEARXNG_MCP_SEARXNG_URL": "https://your-instance.example.com",
+        "SEARXNG_MCP_TIMEOUT": "15",
+        "SEARXNG_MCP_MAX_RESULTS": "20",
+        "SEARXNG_MCP_LANGUAGE": "en"
+      }
+    }
+  }
+}
+```
+
 
 ## Project Structure
 
