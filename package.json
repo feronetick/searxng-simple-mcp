@@ -1,0 +1,34 @@
+{
+  "name": "searxng-simple-mcp",
+  "version": "1.0.0",
+  "description": "SearxNG Simple MCP Server",
+  "main": "src/searxng_simple_mcp/server.py",
+  "bin": {
+    "searxng-simple-mcp": "src/searxng_simple_mcp/server.py"
+  },
+  "scripts": {
+    "start": "python src/run_server.py",
+    "dev": "fastmcp dev src/searxng_simple_mcp/server.py",
+    "dev:editable": "fastmcp dev src/searxng_simple_mcp/server.py --with-editable ./src",
+    "install:claude": "fastmcp install src/searxng_simple_mcp/server.py",
+    "run": "fastmcp run src/searxng_simple_mcp/server.py",
+    "run:stdio": "fastmcp run src/searxng_simple_mcp/server.py --transport stdio",
+    "run:sse": "fastmcp run src/searxng_simple_mcp/server.py --transport sse",
+    "install:deps": "uv pip install -e .",
+    "lint": "ruff check src/",
+    "lint:fix": "ruff check --fix src/",
+    "lint:format": "ruff format src/",
+    "docker:build": "docker build -t searxng-simple-mcp .",
+    "docker:run": "docker run -p 8000:8000 --env-file .env -v ./src:/app/src searxng-simple-mcp",
+    "docker:run:stdio": "docker run -p 8000:8000 --env-file .env -v ./src:/app/src -e TRANSPORT_PROTOCOL=stdio searxng-simple-mcp",
+    "docker:run:sse": "docker run -p 8000:8000 --env-file .env -v ./src:/app/src -e TRANSPORT_PROTOCOL=sse searxng-simple-mcp",
+    "docker:compose:up": "docker-compose up -d",
+    "docker:compose:down": "docker-compose down",
+    "docker:compose:logs": "docker-compose logs -f",
+    "docker:compose:build": "docker-compose build",
+    "docker:compose:restart": "docker-compose restart"
+  },
+  "author": "Sacode",
+  "license": "MIT",
+  "dependencies": {}
+}

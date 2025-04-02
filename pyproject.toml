@@ -1,0 +1,56 @@
+[project]
+name = "searxng-simple-mcp"
+version = "1.0.0"
+description = "SearxNG MCP Server"
+authors = [
+    {name = "Dmitriy Safonov"}
+]
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastmcp",
+    "httpx",
+    "pydantic",
+    "pydantic-settings",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+]
+
+[project.scripts]
+searxng-simple-mcp = "src.searxng_simple_mcp.server:mcp.run"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+[tool.ruff.lint]
+# Enable flake8-bugbear (`B`) rules.
+#select = ["E", "F", "B", "I", "N", "UP", "ANN", "S", "BLE", "A", "C4", "T10", "EM", "EXE", "ISC", "ICN", "G", "PIE", "T20", "PT", "Q", "RSE", "RET", "SIM", "TID", "TCH", "ARG", "ERA", "PD", "PGH", "PL", "TRY", "RUF"]
+#ignore = []
+
+# Allow unused variables when underscore-prefixed.
+#dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
+
+[tool.ruff.lint.isort]
+known-first-party = ["searxng-simple-mcp"]
+known-third-party = ["fastmcp", "httpx", "pydantic"]
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"

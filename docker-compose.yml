@@ -1,0 +1,18 @@
+# Docker Compose configuration for SearxNG Simple MCP Server
+# Uses uv for Python dependency management
+
+services:
+  searxng-simple-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: searxng-simple-mcp
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - SEARXNG_MCP_SEARXNG_URL=https://searx.info
+      - SEARXNG_MCP_TIMEOUT=10
+      - SEARXNG_MCP_MAX_RESULTS=20
+      - SEARXNG_MCP_LANGUAGE=all
+      - TRANSPORT_PROTOCOL=sse # Transport protocol: stdio or sse
