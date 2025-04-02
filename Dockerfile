@@ -28,9 +28,6 @@ ENV PATH="/app/.venv/bin:$PATH"
 # Reset the entrypoint, don't invoke `uv`
 ENTRYPOINT []
 
-# Run the FastAPI application by default
-# Uses `fastapi dev` to enable hot-reloading when the `watch` sync occurs
-# Uses `--host 0.0.0.0` to allow access from outside the container
 # Uses the transport protocol specified by TRANSPORT_PROTOCOL env var (defaults to sse)
 ENV TRANSPORT_PROTOCOL=stdio
 CMD ["sh", "-c", "fastmcp run src/searxng_simple_mcp/server.py --transport ${TRANSPORT_PROTOCOL}"]

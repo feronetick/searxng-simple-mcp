@@ -15,6 +15,7 @@ DEFAULT_TIMEOUT = 10
 DEFAULT_RESULT_COUNT = 10
 DEFAULT_LANGUAGE = "all"
 DEFAULT_FORMAT = "text"
+DEFAULT_LOG_LEVEL = "ERROR"
 
 
 class Settings(BaseSettings):
@@ -28,6 +29,7 @@ class Settings(BaseSettings):
         result_count: Default number of results to return in searches
         language: Language code for search results
         format: Default format for search results
+        log_level: Logging level for the application
     """
 
     # SearxNG instance URL
@@ -60,6 +62,12 @@ class Settings(BaseSettings):
         default=DEFAULT_FORMAT,
         description="Default format for search results ('text', 'json')",
         min_length=1,  # Cannot be empty
+    )
+
+    # Logging settings
+    log_level: str = Field(
+        default=DEFAULT_LOG_LEVEL,
+        description="Logging level for the application (e.g., 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL')",
     )
 
     class Config:

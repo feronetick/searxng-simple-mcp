@@ -36,6 +36,7 @@ settings = Settings()
 mcp = FastMCP(
     "SearxNG Search",
     description="Provides web search capabilities using SearxNG",
+    log_level=settings.log_level,
 )
 # Initialize SearxNG client
 searxng_client = SearxNGClient(settings.searxng_url, settings.timeout)
@@ -115,4 +116,6 @@ SearxNG Instance: {settings.searxng_url}
 Timeout: {settings.timeout} seconds
 Default Result Count: {settings.default_result_count}
 Default Language: {settings.default_language}
+Default Format: {settings.default_format}
+Log Level: {settings.log_level}
     """

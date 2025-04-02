@@ -1,6 +1,6 @@
 [project]
 name = "searxng-simple-mcp"
-version = "1.0.0"
+version = "1.0.1"
 description = "SearxNG MCP Server"
 authors = [
     {name = "Dmitriy Safonov"}
@@ -11,6 +11,7 @@ requires-python = ">=3.10"
 dependencies = [
     "fastmcp",
     "httpx",
+    "mcp[cli]>=1.6.0",
     "pydantic",
     "pydantic-settings",
 ]
@@ -18,10 +19,12 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "ruff",
+    "build",
+    "twine",
 ]
 
 [project.scripts]
-searxng-simple-mcp = "src.searxng_simple_mcp.server:mcp.run"
+searxng-simple-mcp = "searxng_simple_mcp.server:mcp.run"
 
 [build-system]
 requires = ["setuptools>=61.0"]

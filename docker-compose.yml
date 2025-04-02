@@ -17,4 +17,5 @@ services:
       - SEARXNG_MCP_TIMEOUT=10
       - SEARXNG_MCP_MAX_RESULTS=20
       - SEARXNG_MCP_LANGUAGE=all
+      - SEARXNG_MCP_LOG_LEVEL=ERROR # Logging level: DEBUG, INFO, WARNING, ERROR, CRITICAL
       - TRANSPORT_PROTOCOL=sse # Transport protocol: stdio or sse

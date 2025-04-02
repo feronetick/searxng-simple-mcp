@@ -32,7 +32,7 @@ Create a `.clauderc` file in your home directory:
     "searxng": {
       "command": "pipx",
       "args": [
-        "run", "searxng-simple-mcp"
+        "run", "searxng-simple-mcp@latest"
       ],
       "transport": "stdio",
       "env": {
@@ -51,7 +51,7 @@ Create a `.clauderc` file in your home directory:
     "searxng": {
       "command": "uvx",
       "args": [
-        "run", "searxng-simple-mcp"
+        "run", "searxng-simple-mcp@latest"
       ],
       "transport": "stdio",
       "env": {
@@ -115,6 +115,7 @@ Configure the server using environment variables:
 | SEARXNG_MCP_DEFAULT_RESULT_COUNT | Default number of results to return | 10 |
 | SEARXNG_MCP_DEFAULT_LANGUAGE | Language code for results (e.g., 'en', 'ru', 'all') | all |
 | SEARXNG_MCP_DEFAULT_FORMAT | Default format for results ('text', 'json') | text |
+| SEARXNG_MCP_LOG_LEVEL | Logging level (e.g., 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL') | ERROR |
 | TRANSPORT_PROTOCOL | Transport protocol ('stdio' or 'sse') | stdio |
 
 You can find a list of public SearxNG instances at [https://searx.space](https://searx.space) if you don't want to host your own.
@@ -257,6 +258,39 @@ fastmcp run src/searxng_simple_mcp/server.py --transport sse  # Use sse transpor
 # Run in development mode (launches MCP Inspector)
 fastmcp dev src/searxng_simple_mcp/server.py
 ```
+
+## Publishing to PyPI
+
+For maintainers who need to publish new versions of the package to PyPI:
+
+```bash
+# Install development dependencies
+npm run install:deps
+
+# Clean, build, and check the package
+npm run build:package
+npm run check:package
+
+# Publish to PyPI (requires PyPI credentials)
+npm run publish:pypi
+
+# Alternatively, use the all-in-one commands to update version and publish
+npm run publish:patch  # Increments patch version (1.0.1 -> 1.0.2)
+npm run publish:minor  # Increments minor version (1.0.1 -> 1.1.0)
+npm run publish:major  # Increments major version (1.0.1 -> 2.0.0)
+```
+
+These commands will:
+1. Update the version in both package.json and pyproject.toml
+2. Clean the dist directory to remove old builds
+3. Build the package (creating wheel and source distribution)
+4. Check the package for errors
+5. Upload the package to PyPI
+
+You'll need to have a PyPI account and be authenticated with twine. You can set up authentication by:
+- Creating a `.pypirc` file in your home directory
+- Using environment variables (`TWINE_USERNAME` and `TWINE_PASSWORD`)
+- Using PyPI API tokens (recommended)
 
 ## Docker Usage
 
