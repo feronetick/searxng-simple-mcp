@@ -26,7 +26,10 @@
     "docker:compose:down": "docker-compose down",
     "docker:compose:logs": "docker-compose logs -f",
     "docker:compose:build": "docker-compose build",
-    "docker:compose:restart": "docker-compose restart"
+    "docker:compose:restart": "docker-compose restart",
+    "ci:trigger:docker": "gh workflow run docker-build-publish.yml",
+    "ci:trigger:test": "gh workflow run test-lint.yml",
+    "ci:trigger:release": "gh workflow run release-version.yml"
   },
   "author": "Sacode",
   "license": "MIT",

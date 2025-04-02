@@ -1,0 +1,39 @@
+name: Update Version on Release
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+
+jobs:
+  update-version:
+    name: Update Version in Files
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Get release version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+      - name: Update version in package.json
+        run: |
+          sed -i 's/"version": ".*"/"version": "${{ steps.get_version.outputs.VERSION }}"/' package.json
+      
+      - name: Update version in pyproject.toml
+        run: |
+          sed -i 's/version = ".*"/version = "${{ steps.get_version.outputs.VERSION }}"/' pyproject.toml
+      
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add package.json pyproject.toml
+          git commit -m "Update version to ${{ steps.get_version.outputs.VERSION }}"
+          git push

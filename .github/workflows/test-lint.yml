@@ -1,0 +1,45 @@
+name: Test and Lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:  # Allow manual triggering
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-lint:
+    name: Run Tests and Linting
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      
+      - name: Install uv
+        run: pip install uv
+      
+      - name: Create virtual environment and install dependencies
+        run: |
+          uv venv
+          uv pip install -e .
+          uv pip install ruff
+      
+      - name: Run linting
+        run: |
+          .venv/bin/ruff check src/
+      
+      - name: Run formatting check
+        run: |
+          .venv/bin/ruff format --check src/

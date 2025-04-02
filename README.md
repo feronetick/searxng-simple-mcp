@@ -192,6 +192,57 @@ You can specify the transport protocol in several ways:
 
 3. By editing the `.env` file or `docker-compose.yml` file to set the `TRANSPORT_PROTOCOL` variable
 
+## Continuous Integration and Deployment
+
+This project uses GitHub Actions for continuous integration and deployment. When changes are pushed to the `main` branch, the following automated processes occur:
+
+1. The code is checked out
+2. A Docker image is built using the project's Dockerfile
+3. The image is tagged with:
+   - `latest` - Always points to the most recent build
+   - Short SHA of the commit - For precise version tracking
+   - Branch name - For feature branch identification
+   - Semantic version (if tagged) - For release versioning
+4. The image is published to GitHub Container Registry (ghcr.io)
+
+You can find the published Docker images at: `ghcr.io/[your-username]/searxng-simple-mcp`
+
+To use the published Docker image:
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/[your-username]/searxng-simple-mcp:latest
+
+# Run the container
+docker run -p 8000:8000 --env-file .env ghcr.io/[your-username]/searxng-simple-mcp:latest
+```
+The CI/CD workflow configuration can be found in `.github/workflows/docker-build-publish.yml`. The workflow has been configured with the minimum required permissions to push to the GitHub Container Registry.
+
+### Automated Testing and Linting
+
+In addition to the Docker build and publish workflow, this project also includes automated testing and linting:
+
+- **When**: Runs on pull requests to the main branch and on pushes to the main branch
+- **What**:
+  - Runs code linting with Ruff to ensure code quality
+  - Checks code formatting to maintain consistent style
+  - (Future) Runs unit tests to verify functionality
+This helps maintain code quality and catch issues early in the development process. The workflow configuration can be found in `.github/workflows/test-lint.yml`. This workflow uses read-only permissions for security.
+
+### Automated Version Updates
+
+When a new release is created on GitHub, the version number is automatically updated in the project files:
+
+- **When**: Runs when a new release is created
+- **What**:
+  - Updates the version in package.json
+  - Updates the version in pyproject.toml
+  - Commits and pushes the changes back to the repository
+This ensures that the version numbers in the project files always match the latest release. The workflow configuration can be found in `.github/workflows/release-version.yml`. This workflow has been granted write permissions to update files in the repository.
+
+
+
+
 ## Project Structure
 
 ```
