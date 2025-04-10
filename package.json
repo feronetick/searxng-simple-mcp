@@ -1,4 +1,8 @@
 {
+  "name": "searxng-simple-mcp-scripts",
+  "version": "1.0.0",
+  "description": "Script runner for LLM Benchmark project",
+  "private": true,
   "scripts": {
     "start": "python src/run_server.py",
     "dev": "mcp dev src/searxng_simple_mcp/server.py",
@@ -13,12 +17,12 @@
     "lint:format": "ruff format src/",
     "clean:dist": "if exist dist rmdir /s /q dist",
     "build:package": "npm run clean:dist && python -m build",
-    "check:package": "twine check dist/*",
+    "check:package": "python -m twine check dist/*",
     "publish:testpypi": "twine upload --repository testpypi dist/*",
-    "publish:pypi": "twine upload dist/*",
-    "version:patch": "npm version patch && python -c \"import re; f=open('pyproject.toml', 'r'); content=f.read(); f.close(); version=re.search('version = \\\"([0-9]+\\.[0-9]+\\.[0-9]+)\\\"', content).group(1); parts=version.split('.'); parts[2]=str(int(parts[2])+1); new_version='.'.join(parts); f=open('pyproject.toml', 'w'); f.write(re.sub('version = \\\"[0-9]+\\.[0-9]+\\.[0-9]+\\\"', f'version = \\\"{new_version}\\\"', content)); f.close(); print(f'Updated pyproject.toml version to {new_version}')\"",
-    "version:minor": "npm version minor && python -c \"import re; f=open('pyproject.toml', 'r'); content=f.read(); f.close(); version=re.search('version = \\\"([0-9]+\\.[0-9]+\\.[0-9]+)\\\"', content).group(1); parts=version.split('.'); parts[1]=str(int(parts[1])+1); parts[2]='0'; new_version='.'.join(parts); f=open('pyproject.toml', 'w'); f.write(re.sub('version = \\\"[0-9]+\\.[0-9]+\\.[0-9]+\\\"', f'version = \\\"{new_version}\\\"', content)); f.close(); print(f'Updated pyproject.toml version to {new_version}')\"",
-    "version:major": "npm version major && python -c \"import re; f=open('pyproject.toml', 'r'); content=f.read(); f.close(); version=re.search('version = \\\"([0-9]+\\.[0-9]+\\.[0-9]+)\\\"', content).group(1); parts=version.split('.'); parts[0]=str(int(parts[0])+1); parts[1]='0'; parts[2]='0'; new_version='.'.join(parts); f=open('pyproject.toml', 'w'); f.write(re.sub('version = \\\"[0-9]+\\.[0-9]+\\.[0-9]+\\\"', f'version = \\\"{new_version}\\\"', content)); f.close(); print(f'Updated pyproject.toml version to {new_version}')\"",
+    "publish:pypi": "python -m twine upload dist/*",
+    "version:patch": "python scripts/bump_version.py patch",
+    "version:minor": "python scripts/bump_version.py minor",
+    "version:major": "python scripts/bump_version.py major",
     "publish:patch": "npm run version:patch && npm run build:package && npm run check:package && npm run publish:pypi",
     "publish:minor": "npm run version:minor && npm run build:package && npm run check:package && npm run publish:pypi",
     "publish:major": "npm run version:major && npm run build:package && npm run check:package && npm run publish:pypi",
@@ -38,8 +42,5 @@
     "ci:trigger:docker": "gh workflow run docker-build-publish.yml",
     "ci:trigger:test": "gh workflow run test-lint.yml",
     "ci:trigger:release": "gh workflow run release-version.yml"
-  },
-  "author": "Sacode",
-  "license": "MIT",
-  "dependencies": {}
+  }
 }

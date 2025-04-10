@@ -1,0 +1,15 @@
+## Technology Stack
+
+- **Language**: Python 3.10+
+- **Package Management**: UV for fast, reliable dependency resolution
+- **Build System**: Flit for simplified Python packaging
+- **Containerization**: Docker
+
+## Conventions
+
+- **Code Style**: Enforced by ruff and mypy with strict type checking
+- **Documentation**: Minimal docstrings for public members only. Documentation should be concise and to the point
+- **Data Structures**: All data structures must be implemented as Pydantic classes rather than dictionaries, dataclasses, or other similar structures
+- **Type Definitions**: Types must be defined in separate files (e.g., `types.py`) within each module
+- **Code Simplicity**: Follow the KISS principle (Keep It Simple). Code should be straightforward and understandable. Avoid unnecessary design patterns and over-engineering
+- **Pydantic Validation**: Always use the simplest validation approach with Pydantic V2, such as Field constraints instead of custom validators whenever possible
