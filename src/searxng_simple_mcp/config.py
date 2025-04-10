@@ -74,7 +74,7 @@ class Settings(BaseSettings):
         """Pydantic configuration for environment variables."""
 
         env_prefix = "SEARXNG_MCP_"
-        env_file = ".env"
+        env_file = None
         case_sensitive = False
 
         # Enable better error messages
