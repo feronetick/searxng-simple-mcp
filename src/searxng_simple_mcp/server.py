@@ -35,7 +35,7 @@ settings = Settings()
 # Create FastMCP server
 mcp = FastMCP(
     "SearxNG Search",
-    description="Provides web search capabilities using SearxNG",
+    instructions="Provides web search capabilities using SearxNG",
     log_level=settings.log_level,
 )
 # Initialize SearxNG client
